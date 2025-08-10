@@ -1,6 +1,6 @@
 
 # Visit Lanka - Explore the Pearl of the Indian Ocean
-
+<img width="2000" height="3000" alt="uiux design @ visitlanka" src="https://github.com/user-attachments/assets/019e1d79-f7a9-4208-958d-a90db0076646" />
 
 ## 📋 Table of Contents
 - [Features](#-features)
@@ -248,3 +248,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 ----
 
 © Tharul-J
+
