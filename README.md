@@ -1,6 +1,6 @@
-# 🌴 Visit Lanka - Sri Lanka Tourism Website
 
-A comprehensive tourism website for Sri Lanka featuring destinations, tours, gallery, and booking management with admin panel.
+# Visit Lanka - Explore the Pearl of the Indian Ocean
+
 
 ## 📋 Table of Contents
 - [Features](#-features)
@@ -215,15 +215,6 @@ Visit Lanka/
 - **Form Validation** - Client-side validation with feedback
 - **Pagination** - Load more functionality
 
-## 📱 Browser Support
-
-- **Chrome** 90+
-- **Firefox** 88+
-- **Safari** 14+
-- **Edge** 90+
-- **Mobile Safari** iOS 14+
-- **Chrome Mobile** Android 10+
-
 ## 🔧 Development
 
 ### Prerequisites for Backend Development
@@ -241,28 +232,6 @@ Visit Lanka/
 6. Implement email notifications
 7. Add advanced features (caching, optimization)
 
-## 📈 Future Enhancements
-
-### Phase 1 - Backend Integration
-- [ ] MySQL database setup
-- [ ] PHP API development
-- [ ] User authentication system
-- [ ] File upload functionality
-
-### Phase 2 - Advanced Features
-- [ ] Email notifications
-- [ ] Payment gateway integration
-- [ ] Advanced search and filtering
-- [ ] SEO optimization
-- [ ] Performance optimization
-
-### Phase 3 - Additional Features
-- [ ] Multi-language support
-- [ ] Social media integration
-- [ ] Weather API integration
-- [ ] Maps integration
-- [ ] Review system
-- [ ] Blog/News section
 
 ## 🤝 Contributing
 
@@ -276,21 +245,6 @@ Visit Lanka/
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 📞 Contact
+----
 
-**Project Developer**: TharuL
-- Email: [your.email@example.com]
-- GitHub: [your-github-username]
-
-**Project Link**: [https://github.com/your-username/visit-lanka](https://github.com/your-username/visit-lanka)
-
-## 🙏 Acknowledgments
-
-- **Sri Lanka Tourism Board** - Inspiration and destination information
-- **Tailwind CSS** - Utility-first CSS framework
-- **Font Awesome** - Icon library
-- **Unsplash/Pexels** - Stock photography (replace with actual sources)
-
----
-
-**Made with ❤️ for Sri Lankan Tourism**
+© Tharul-J
