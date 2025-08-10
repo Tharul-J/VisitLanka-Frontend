@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visit Lanka - Interactive Demo</title>
+    
+    <!-- Third-party libraries (keep these in the head) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    
+    <!-- Link your custom CSS file -->
+    <link rel="stylesheet" href="./main.css">
+</head>
+<body class="bg-white text-gray-800">
+
+    <!-- Header & Navigation -->
+    <header id="main-header" class="bg-white shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-6 py-4 flex justify-between items-center relative">
+            <a href="#home" class="flex items-center text-2xl font-bold text-green-700 nav-link">
+                <img src="./images/logo.png" alt="Visit Lanka Logo" class="h-16 logo-image-circular-clean" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+                <span style="display: none; font-weight: bold; color: #15803d;">Visit Lanka</span>
+            </a>
+            <div class="hidden md:flex space-x-8 items-center absolute left-1/2 -translate-x-1/2">
+                <a href="#home" class="text-gray-600 hover:text-green-700 nav-link">Home</a>
+                <a href="#destinations" class="text-gray-600 hover:text-green-700 nav-link">Destinations</a>
+                <a href="#tours" class="text-gray-600 hover:text-green-700 nav-link">Tours</a>
+                <a href="#gallery" class="text-gray-600 hover:text-green-700 nav-link">Gallery</a>
+                <a href="#contact" class="text-gray-600 hover:text-green-700 nav-link">Contact Us</a>
+                <a href="#" class="text-gray-600 hover:text-green-700 nav-link hidden" data-target="account">My Account</a>
+                <a href="#" class="text-gray-600 hover:text-green-700 nav-link hidden" data-target="admin">Admin</a>
+            </div>
+            <div class="flex items-center">
+                <div class="hidden md:block">
+                    <button id="login-btn" class="bg-green-700 text-white px-5 py-2 rounded-lg hover:bg-green-800 nav-link" data-target="login">Login</button>
+                    <button id="logout-btn" class="hidden bg-amber-500 text-white px-5 py-2 rounded-lg hover:bg-amber-600">Logout</button>
+                </div>
+                <button id="mobile-menu-button" class="md:hidden ml-4">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden px-6 pt-2 pb-4 space-y-2 bg-white border-t">
+            <a href="#home" class="block text-gray-600 hover:text-green-700 nav-link">Home</a>
+            <a href="#destinations" class="block text-gray-600 hover:text-green-700 nav-link">Destinations</a>
+            <a href="#tours" class="block text-gray-600 hover:text-green-700 nav-link">Tours</a>
+            <a href="#gallery" class="block text-gray-600 hover:text-green-700 nav-link">Gallery</a>
+            <a href="#contact" class="block text-gray-600 hover:text-green-700 nav-link">Contact Us</a>
+            <a href="#" id="mobile-user-account-link" class="block text-gray-600 hover:text-green-700 nav-link hidden" data-target="account">My Account</a>
+            <a href="#" id="mobile-admin-link" class="block text-gray-600 hover:text-green-700 nav-link hidden" data-target="admin">Admin</a>
+            <div class="border-t pt-2 mt-2">
+                 <button id="mobile-login-btn" class="w-full text-left bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800 nav-link" data-target="login">Login</button>
+                 <button id="mobile-logout-btn" class="w-full text-left hidden mt-2 bg-amber-500 text-white px-4 py-2 rounded-md hover:bg-amber-600">Logout</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Page Container -->
+        <div id="home-page" class="page-section active">
+            <!-- Home Hero Section -->
+            <section id="home" class="relative h-[90vh] flex flex-col justify-center items-center text-center text-white">
+                <div id="hero-slideshow">
+                    <!-- Slides will be populated by JavaScript -->
+                </div>
+                
+                <!-- Navigation arrows -->
+                <button class="slider-arrow prev" id="prevSlide">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="slider-arrow next" id="nextSlide">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+                
+                <!-- Navigation dots -->
+                <div class="slider-navigation" id="sliderDots">
+                    <!-- Dots will be populated by JavaScript -->
+                </div>
+                
+                <div class="absolute inset-0 bg-black opacity-50"></div>
+                <div class="relative z-10 p-8 flex flex-col items-center">
+                    <img src="./images/logo.png" alt="Visit Lanka Logo" class="h-32 mb-6 logo-image-circular-clean" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display: none; text-align: center; margin-bottom: 1.5rem;">
+                        <span style="font-size: 2rem; font-weight: bold; color: #0d9488; text-shadow: 2px 2px 4px rgba(0,0,0,0.5);">Visit Lanka</span>
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-extrabold mb-4 drop-shadow-lg">Visit Lanka</h1>
+                    <p class="text-xl md:text-2xl max-w-3xl drop-shadow-md mb-8">Explore the Pearl of the Indian Ocean</p>
+                    <p class="max-w-3xl text-gray-200 mb-10">Discover ancient temples, pristine beaches, lush tea plantations, and vibrant wildlife. Experience the rich culture and warm hospitality of Sri Lanka's diverse landscapes.</p>
+                    <div class="flex space-x-4">
+                        <a href="#destinations" class="bg-green-700 text-white px-8 py-3 rounded-lg hover:bg-green-800 transition-transform hover:scale-105 nav-link">Explore Destinations</a>
+                        <a href="#tours" class="bg-gray-700 bg-opacity-50 text-white px-8 py-3 rounded-lg hover:bg-opacity-70 transition-transform hover:scale-105 nav-link">View Packages</a>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Destinations Section -->
+            <section id="destinations" class="py-16">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-4xl font-bold text-center mb-4">Explore Destinations</h2>
+                    <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">Here you can find a list of beautiful places to visit in Sri Lanka. Use the filters and search bar to find destinations that match your preferences.</p>
+                    <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+                            <div class="md:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-4">
+                                <div>
+                                    <label for="province-filter" class="block text-gray-700 font-medium mb-2">Filter by Province</label>
+                                    <select id="province-filter" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                        <option value="all">All Provinces</option>
+                                        <option value="Western">Western</option>
+                                        <option value="Central">Central</option>
+                                        <option value="Southern">Southern</option>
+                                        <option value="Northern">Northern</option>
+                                        <option value="Eastern">Eastern</option>
+                                        <option value="North Western">North Western</option>
+                                        <option value="North Central">North Central</option>
+                                        <option value="Uva">Uva</option>
+                                        <option value="Sabaragamuwa">Sabaragamuwa</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="activity-filter" class="block text-gray-700 font-medium mb-2">Filter by Activity</label>
+                                    <select id="activity-filter" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                        <option value="all">All Activities</option>
+                                        <option value="Adventure Sports">Adventure Sports</option>
+                                        <option value="Cultural & Historical">Cultural & Historical</option>
+                                        <option value="Nature & Wildlife">Nature & Wildlife</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="duration-filter" class="block text-gray-700 font-medium mb-2">Filter by Duration</label>
+                                    <select id="duration-filter" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                        <option value="all">Any Duration</option>
+                                        <option value="1-3 Days">1-3 Days</option>
+                                        <option value="4-7 Days">4-7 Days</option>
+                                        <option value="1-2 Weeks">1-2 Weeks</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="flex items-end">
+                                <button id="clear-filters-btn" class="w-full bg-gray-200 text-gray-700 px-6 py-2 rounded-md hover:bg-gray-300">Clear All Filters</button>
+                            </div>
+                        </div>
+                         <div class="mt-4">
+                            <label for="search-input" class="sr-only">Search</label>
+                            <input type="text" id="search-input" placeholder="Search by title or location..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                        </div>
+                    </div>
+                    <div id="destinations-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8"></div>
+                    
+                    <!-- Load More Button for Destinations -->
+                    <div class="text-center">
+                        <button id="load-more-destinations" class="hidden bg-green-700 text-white px-8 py-3 rounded-lg hover:bg-green-800 transition-all duration-300 font-medium">
+                            <i class="fas fa-plus-circle mr-2"></i>Load More Destinations
+                        </button>
+                        <div id="destinations-loading" class="hidden">
+                            <i class="fas fa-spinner fa-spin text-teal-500 text-2xl"></i>
+                            <p class="text-gray-600 mt-2">Loading more destinations...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Tours Section -->
+            <section id="tours" class="py-16 bg-gray-50">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-4xl font-bold text-center mb-4">Browse Our Tours</h2>
+                    <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">Find your perfect adventure from our curated selection of tour packages across Sri Lanka.</p>
+                    <div class="bg-white p-6 rounded-xl shadow-md mb-8">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <div>
+                                <label for="tour-type-filter" class="block text-gray-700 font-medium mb-2">Tour Type</label>
+                                <select id="tour-type-filter" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                    <option value="all">All Types</option>
+                                    <option value="Adventure">Adventure</option>
+                                    <option value="Cultural">Cultural</option>
+                                    <option value="Wildlife">Wildlife</option>
+                                    <option value="Beach">Beach</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="tour-price-filter" class="block text-gray-700 font-medium mb-2">Price Range</label>
+                                <select id="tour-price-filter" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                    <option value="all">All Prices</option>
+                                    <option value="low">Under $500</option>
+                                    <option value="medium">$500 - $1500</option>
+                                    <option value="high">Over $1500</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="group-size-filter" class="block text-gray-700 font-medium mb-2">Group Size</label>
+                                <select id="group-size-filter" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                                    <option value="all">Any Size</option>
+                                    <option value="small">Small Group (1-4)</option>
+                                    <option value="medium">Medium Group (5-10)</option>
+                                    <option value="large">Large Group (10+)</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="tour-search-input" class="block text-gray-700 font-medium mb-2">Search</label>
+                                <input type="text" id="tour-search-input" placeholder="Search tours..." class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="tours-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-12 mb-8"></div>
+                    
+                    <!-- Load More Button for Tours -->
+                    <div class="text-center">
+                        <button id="load-more-tours" class="hidden bg-green-700 text-white px-8 py-3 rounded-lg hover:bg-green-800 transition-all duration-300 font-medium">
+                            <i class="fas fa-plus-circle mr-2"></i>Load More Tours
+                        </button>
+                        <div id="tours-loading" class="hidden">
+                            <i class="fas fa-spinner fa-spin text-teal-500 text-2xl"></i>
+                            <p class="text-gray-600 mt-2">Loading more tours...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Gallery Section -->
+            <section id="gallery" class="py-16">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-4xl font-bold text-center mb-4">Image Gallery</h2>
+                    <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">A visual journey through the stunning landscapes and vibrant culture of Sri Lanka. All images are dynamically loaded from our curated collection.</p>
+                    <div id="gallery-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+                </div>
+            </section>
+
+            <!-- Contact Us Section -->
+            <section id="contact" class="py-16 bg-gray-50">
+                <div class="container mx-auto px-6">
+                    <h2 class="text-4xl font-bold text-center mb-4">Contact Us</h2>
+                    <p class="text-center text-gray-600 max-w-3xl mx-auto mb-12">Ready to start your Sri Lankan adventure? Get in touch with our travel experts to plan your perfect trip.</p>
+                    <div class="max-w-5xl mx-auto bg-white p-8 rounded-xl shadow-lg grid md:grid-cols-2 gap-12">
+                        <div>
+                            <h3 class="text-2xl font-bold mb-6">Send us a Message</h3>
+                            <form id="contact-form" class="space-y-4">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div><label for="first-name" class="block text-gray-700 font-medium mb-1">First Name</label><input type="text" id="first-name" name="first-name" class="w-full px-4 py-2 border border-gray-300 rounded-md" required></div>
+                                    <div><label for="last-name" class="block text-gray-700 font-medium mb-1">Last Name</label><input type="text" id="last-name" name="last-name" class="w-full px-4 py-2 border border-gray-300 rounded-md" required></div>
+                                </div>
+                                <div><label for="email" class="block text-gray-700 font-medium mb-1">Email Address</label><input type="email" id="email" name="email" class="w-full px-4 py-2 border border-gray-300 rounded-md" required></div>
+                                <div><label for="phone" class="block text-gray-700 font-medium mb-1">Phone Number</label><input type="tel" id="phone" name="phone" class="w-full px-4 py-2 border border-gray-300 rounded-md"></div>
+                                <div><label for="message" class="block text-gray-700 font-medium mb-1">Message</label><textarea id="message" name="message" rows="5" placeholder="Tell us about your travel preferences..." class="w-full px-4 py-2 border border-gray-300 rounded-md" required></textarea></div>
+                                <button type="submit" class="w-full bg-green-700 text-white py-3 px-4 rounded-lg hover:bg-green-800 transition duration-300">Send Message</button>
+                            </form>
+                        </div>
+                        <div class="space-y-6">
+                             <h3 class="text-2xl font-bold mb-6">Get in Touch</h3>
+                             <div>
+                                 <h4 class="font-semibold flex items-center"><i class="fas fa-map-marker-alt text-teal-500 mr-3"></i>Office Address</h4>
+                                 <p class="text-gray-600 pl-6">123 Galle Road, Colombo 03<br>Sri Lanka</p>
+                             </div>
+                             <div>
+                                 <h4 class="font-semibold flex items-center"><i class="fas fa-phone-alt text-teal-500 mr-3"></i>Phone Numbers</h4>
+                                 <p class="text-gray-600 pl-6">+94 11 234 5678<br>+94 77 123 4567</p>
+                             </div>
+                             <div>
+                                 <h4 class="font-semibold flex items-center"><i class="fas fa-envelope text-teal-500 mr-3"></i>Email Addresses</h4>
+                                 <p class="text-gray-600 pl-6">info@visitlanka.com<br>bookings@visitlanka.com</p>
+                             </div>
+                             <div>
+                                 <h4 class="font-semibold flex items-center"><i class="fas fa-clock text-teal-500 mr-3"></i>Business Hours</h4>
+                                 <p class="text-gray-600 pl-6">Monday - Friday: 9:00 AM - 6:00 PM<br>Saturday: 9:00 AM - 4:00 PM<br>Sunday: Closed</p>
+                             </div>
+                             <div>
+                                 <h4 class="font-semibold mb-2">Follow Us</h4>
+                                 <div class="flex space-x-3">
+                                    <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 flex items-center justify-center bg-green-700 text-white rounded-full hover:bg-green-800"><i class="fab fa-facebook-f"></i></a>
+                                    <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 flex items-center justify-center bg-green-700 text-white rounded-full hover:bg-green-800"><i class="fab fa-instagram"></i></a>
+                                    <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 flex items-center justify-center bg-green-700 text-white rounded-full hover:bg-green-800"><i class="fab fa-twitter"></i></a>
+                                    <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="w-10 h-10 flex items-center justify-center bg-green-700 text-white rounded-full hover:bg-green-800"><i class="fab fa-youtube"></i></a>
+                                 </div>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <!-- Other Pages (Login, Admin, etc.) -->
+        <div id="other-pages">
+            <section id="login" class="page-section py-16">
+                 <div class="max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
+                    <div id="login-view">
+                        <h3 class="text-3xl font-bold text-center mb-6">Login</h3>
+                        <form id="login-form">
+                            <div class="mb-4">
+                                <label for="login-email" class="block text-gray-700 mb-2">Email</label>
+                                <input type="email" id="login-email" class="w-full p-2 border rounded" value="admin@visitlanka.com">
+                                <p class="text-sm text-gray-500 mt-1">Hint: Use 'admin@visitlanka.com' or 'user@visitlanka.com'.</p>
+                            </div>
+                            <div class="mb-2">
+                                <label for="login-password" class="block text-gray-700 mb-2">Password</label>
+                                <input type="password" id="login-password" class="w-full p-2 border rounded" value="password">
+                                 <p class="text-sm text-gray-500 mt-1">Hint: Use 'password'.</p>
+                            </div>
+                            <div class="text-right mb-6"><a href="#" id="show-reset-password" class="text-sm text-teal-600 hover:underline">Forgot Password?</a></div>
+                            <button type="submit" class="w-full bg-green-700 text-white py-2 rounded hover:bg-green-800">Login</button>
+                        </form>
+                        <p class="text-center mt-4">Don't have an account? <a href="#" id="show-register" class="text-teal-600 hover:underline">Register here</a></p>
+                    </div>
+                    <div id="register-view" class="hidden">
+                        <h3 class="text-3xl font-bold text-center mb-6">Register</h3>
+                        <form id="register-form">
+                            <div class="mb-4"><label for="register-name" class="block text-gray-700 mb-2">Name</label><input type="text" id="register-name" class="w-full p-2 border rounded" required></div>
+                            <div class="mb-4"><label for="register-email" class="block text-gray-700 mb-2">Email</label><input type="email" id="register-email" class="w-full p-2 border rounded" required></div>
+                            <div class="mb-6"><label for="register-password" class="block text-gray-700 mb-2">Password</label><input type="password" id="register-password" class="w-full p-2 border rounded" required></div>
+                            <button type="submit" class="w-full bg-green-700 text-white py-2 rounded hover:bg-green-800">Register</button>
+                        </form>
+                        <p class="text-center mt-4">Already have an account? <a href="#" id="show-login" class="text-teal-600 hover:underline">Login here</a></p>
+                    </div>
+                    <div id="reset-password-view" class="hidden">
+                        <h3 class="text-3xl font-bold text-center mb-6">Reset Password</h3>
+                        <p class="text-center text-gray-600 mb-4">Enter your email address to receive a password reset link.</p>
+                        <form id="reset-password-form">
+                            <div class="mb-6"><label for="reset-email" class="block text-gray-700 mb-2">Email</label><input type="email" id="reset-email" class="w-full p-2 border rounded" required></div>
+                            <button type="submit" class="w-full bg-green-700 text-white py-2 rounded hover:bg-green-800">Send Reset Link</button>
+                        </form>
+                        <p class="text-center mt-4"><a href="#" id="back-to-login" class="text-teal-600 hover:underline">Back to Login</a></p>
+                    </div>
+                </div>
+            </section>
+            <section id="account" class="page-section py-16">
+                <div class="container mx-auto px-6">
+                    <div class="max-w-6xl mx-auto">
+                        <h1 class="text-4xl font-bold text-center mb-8">My Account</h1>
+                        
+                        <!-- User Profile Section -->
+                        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                            <h2 class="text-2xl font-bold mb-6">Profile Information</h2>
+                            
+                            <!-- Display Mode -->
+                            <div id="profile-display-mode">
+                                <div class="grid md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-gray-700 font-medium mb-2">Name</label>
+                                        <p id="user-profile-name" class="text-lg text-gray-900">-</p>
+                                    </div>
+                                    <div>
+                                        <label class="block text-gray-700 font-medium mb-2">Email</label>
+                                        <p id="user-profile-email" class="text-lg text-gray-900">-</p>
+                                    </div>
+                                </div>
+                                <button id="edit-profile-btn" class="mt-4 bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-800">Edit Profile</button>
+                            </div>
+                            
+                            <!-- Edit Mode -->
+                            <div id="profile-edit-mode" class="hidden">
+                                <form id="edit-profile-form">
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div>
+                                            <label for="edit-user-name" class="block text-gray-700 font-medium mb-2">Name</label>
+                                            <input type="text" id="edit-user-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+                                        </div>
+                                        <div>
+                                            <label for="edit-user-email" class="block text-gray-700 font-medium mb-2">Email</label>
+                                            <input type="email" id="edit-user-email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" required>
+                                        </div>
+                                    </div>
+                                    <div class="grid md:grid-cols-2 gap-6 mt-4">
+                                        <div>
+                                            <label for="edit-user-password" class="block text-gray-700 font-medium mb-2">New Password (optional)</label>
+                                            <input type="password" id="edit-user-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" placeholder="Leave blank to keep current password">
+                                        </div>
+                                        <div>
+                                            <label for="edit-user-confirm-password" class="block text-gray-700 font-medium mb-2">Confirm New Password</label>
+                                            <input type="password" id="edit-user-confirm-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent" placeholder="Confirm new password">
+                                        </div>
+                                    </div>
+                                    <div class="flex gap-4 mt-6">
+                                        <button type="submit" class="bg-green-700 text-white px-6 py-2 rounded-lg hover:bg-green-800">Save Changes</button>
+                                        <button type="button" id="cancel-edit-profile-btn" class="bg-gray-500 text-white px-6 py-2 rounded-lg hover:bg-gray-600">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- My Bookings Section -->
+                        <div class="bg-white rounded-xl shadow-lg p-8 mb-8">
+                            <h2 class="text-2xl font-bold mb-6">My Bookings</h2>
+                            <div id="user-bookings-container">
+                                <div id="no-user-bookings" class="text-center py-12">
+                                    <i class="fas fa-calendar-times text-6xl text-gray-300 mb-4"></i>
+                                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Bookings Yet</h3>
+                                    <p class="text-gray-500 mb-6">You haven't made any bookings yet. Explore our tours and start your adventure!</p>
+                                    <a href="#tours" class="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 nav-link">Browse Tours</a>
+                                </div>
+                                <div id="user-bookings-list" class="space-y-4"></div>
+                            </div>
+                        </div>
+
+                        <!-- My Wishlist Section -->
+                        <div class="bg-white rounded-xl shadow-lg p-8">
+                            <h2 class="text-2xl font-bold mb-6">My Wishlist</h2>
+                            <div id="user-wishlist-container">
+                                <div id="no-user-wishlist" class="text-center py-12">
+                                    <i class="fas fa-heart text-6xl text-gray-300 mb-4"></i>
+                                    <h3 class="text-xl font-semibold text-gray-600 mb-2">No Wishlist Items Yet</h3>
+                                    <p class="text-gray-500 mb-6">You haven't added any destinations to your wishlist yet. Explore destinations and save your favorites!</p>
+                                    <a href="#destinations" class="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 nav-link">Browse Destinations</a>
+                                </div>
+                                <div id="user-wishlist-grid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="admin" class="page-section">
+                <div id="admin-layout">
+                     <aside id="admin-sidebar" class="bg-gray-800 text-white p-6 min-h-screen">
+                        <div class="text-center mb-12">
+                            <img src="./images/logo.png" alt="Admin Logo" class="h-16 mx-auto mb-4 logo-image-circular" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div style="display: none; margin-bottom: 1rem;">
+                                <span style="font-size: 1.5rem; font-weight: bold; color: #0d9488;">Visit Lanka</span>
+                            </div>
+                            <h2 id="admin-user-name" class="text-xl font-bold">Admin User</h2>
+                            <p id="admin-user-email" class="text-sm text-gray-400">admin@visitlanka.com</p>
+                        </div>
+                        <nav class="space-y-4">
+                            <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-700 admin-nav-link" data-target="admin-dashboard"><i class="fas fa-tachometer-alt w-6 mr-3"></i>Dashboard</a>
+                            <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-700 admin-nav-link" data-target="admin-destinations"><i class="fas fa-map-marked-alt w-6 mr-3"></i>Destinations</a>
+                            <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-700 admin-nav-link" data-target="admin-tours"><i class="fas fa-route w-6 mr-3"></i>Tours</a>
+                            <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-700 admin-nav-link" data-target="admin-gallery"><i class="fas fa-images w-6 mr-3"></i>Gallery</a>
+                            <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-700 admin-nav-link" data-target="admin-bookings"><i class="fas fa-book-open w-6 mr-3"></i>Bookings</a>
+                            <a href="#" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-700 admin-nav-link" data-target="admin-profile"><i class="fas fa-user-edit w-6 mr-3"></i>My Profile</a>
+                            <a href="#" id="admin-logout-btn" class="flex items-center px-4 py-2 rounded-md hover:bg-gray-700"><i class="fas fa-sign-out-alt w-6 mr-3"></i>Logout</a>
+                        </nav>
+                    </aside>
+                    <div id="admin-main-content" class="p-8 w-full">
+                        <!-- Admin Dashboard -->
+                        <div id="admin-dashboard" class="admin-section">
+                            <h1 class="text-3xl font-bold mb-6">Admin Dashboard</h1>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+                                    <i class="fas fa-users text-3xl text-teal-500 mr-4"></i>
+                                    <div>
+                                        <p class="text-gray-500">Total Users</p>
+                                        <p id="total-users" class="text-2xl font-bold">0</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+                                    <i class="fas fa-map-marked-alt text-3xl text-teal-500 mr-4"></i>
+                                    <div>
+                                        <p class="text-gray-500">Total Destinations</p>
+                                        <p id="total-destinations" class="text-2xl font-bold">0</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-6 rounded-lg shadow-md flex items-center">
+                                    <i class="fas fa-book-open text-3xl text-teal-500 mr-4"></i>
+                                    <div>
+                                        <p class="text-gray-500">Total Bookings</p>
+                                        <p id="total-bookings" class="text-2xl font-bold">0</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+                                <h3 class="text-2xl font-bold mb-4">Content Overview</h3>
+                                <div class="chart-container" style="position: relative; height:40vh; width:100%; max-width: 600px; margin: auto;">
+                                    <canvas id="destinationsChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Manage Destinations -->
+                        <div id="admin-destinations" class="admin-section">
+                             <h1 class="text-3xl font-bold mb-6">Manage Destinations</h1>
+                             <div class="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+                                <table class="w-full text-left min-w-[700px]">
+                                    <thead><tr class="bg-gray-100"><th class="p-3">Image</th><th class="p-3">Title</th><th class="p-3">Location</th><th class="p-3">Author</th><th class="p-3">Actions</th></tr></thead>
+                                    <tbody id="admin-destinations-table-body"></tbody>
+                                </table>
+                                <div class="mt-4"><button class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800" id="add-destination-btn">Add New Destination</button></div>
+                            </div>
+                        </div>
+                        <!-- Manage Tours -->
+                        <div id="admin-tours" class="admin-section">
+                             <h1 class="text-3xl font-bold mb-6">Manage Tours</h1>
+                             <div class="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+                                <table class="w-full text-left min-w-[700px]">
+                                    <thead><tr class="bg-gray-100"><th class="p-3">Image</th><th class="p-3">Tour Name</th><th class="p-3">Price</th><th class="p-3">Actions</th></tr></thead>
+                                    <tbody id="admin-tours-table-body"></tbody>
+                                </table>
+                                <div class="mt-4"><button class="bg-green-700 text-white px-4 py-2 rounded-md hover:bg-green-800" id="add-tour-btn">Add New Tour</button></div>
+                            </div>
+                        </div>
+                        
+                        <!-- Manage Gallery -->
+                        <div id="admin-gallery" class="admin-section">
+                            <h1 class="text-3xl font-bold mb-6">Manage Gallery</h1>
+                            
+                            <!-- Add New Image Form -->
+                            <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+                                <h2 class="text-xl font-bold mb-4">Add New Image</h2>
+                                <form id="add-gallery-form" class="grid md:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="gallery-title" class="block text-gray-700 font-medium mb-2">Image Title</label>
+                                        <input type="text" id="gallery-title" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500" required>
+                                    </div>
+                                    <div>
+                                        <label for="gallery-category" class="block text-gray-700 font-medium mb-2">Category</label>
+                                        <select id="gallery-category" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500" required>
+                                            <option value="">Select Category</option>
+                                            <option value="Cultural">Cultural</option>
+                                            <option value="Nature">Nature</option>
+                                            <option value="Beach">Beach</option>
+                                            <option value="Wildlife">Wildlife</option>
+                                            <option value="Adventure">Adventure</option>
+                                        </select>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="gallery-description" class="block text-gray-700 font-medium mb-2">Description</label>
+                                        <textarea id="gallery-description" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500" required></textarea>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <label for="gallery-url" class="block text-gray-700 font-medium mb-2">Image URL (e.g., ./images/filename.png)</label>
+                                        <input type="url" id="gallery-url" class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-teal-500" placeholder="./images/example.png" required>
+                                    </div>
+                                    <div class="md:col-span-2">
+                                        <button type="submit" class="bg-green-700 text-white px-6 py-2 rounded-md hover:bg-green-800">Add Image</button>
+                                        <button type="button" id="cancel-gallery-add" class="ml-3 bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600">Cancel</button>
+                                    </div>
+                                </form>
+                            </div>
+
+                            <!-- Gallery Images Grid -->
+                            <div class="bg-white p-6 rounded-lg shadow-md">
+                                <h2 class="text-xl font-bold mb-4">Gallery Images</h2>
+                                <div id="admin-gallery-grid" class="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                                    <!-- Gallery items will be populated here -->
+                                </div>
+                            </div>
+                        </div>
+                        
+                         <!-- Manage Bookings -->
+                        <div id="admin-bookings" class="admin-section">
+                             <h1 class="text-3xl font-bold mb-6">Manage Bookings</h1>
+                             <div class="bg-white p-6 rounded-lg shadow-md overflow-x-auto">
+                                <table class="w-full text-left min-w-[600px]">
+                                    <thead><tr class="bg-gray-100"><th class="p-3">Tour</th><th class="p-3">User</th><th class="p-3">Guests</th><th class="p-3">Date</th></tr></thead>
+                                    <tbody id="admin-bookings-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!-- Admin Profile -->
+                        <div id="admin-profile" class="admin-section">
+                             <h1 class="text-3xl font-bold mb-6">My Profile</h1>
+                             <div class="max-w-lg mx-auto bg-white p-8 rounded-lg shadow-md">
+                                <form id="admin-profile-form">
+                                    <div class="mb-4">
+                                        <label for="admin-profile-name" class="block text-gray-700 font-medium mb-2">Name</label>
+                                        <input type="text" id="admin-profile-name" class="w-full px-4 py-2 border rounded-md" required>
+                                    </div>
+                                    <div class="mb-4">
+                                        <label for="admin-profile-email" class="block text-gray-700 font-medium mb-2">Email</label>
+                                        <input type="email" id="admin-profile-email" class="w-full px-4 py-2 border rounded-md" disabled>
+                                    </div>
+                                    <div class="mb-6">
+                                        <label for="admin-profile-password" class="block text-gray-700 font-medium mb-2">New Password (optional)</label>
+                                        <input type="password" id="admin-profile-password" class="w-full px-4 py-2 border rounded-md">
+                                    </div>
+                                    <button type="submit" class="w-full bg-green-700 text-white py-2 px-4 rounded-md hover:bg-green-800">Update Profile</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="post-destination" class="page-section py-16">
+                 <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-center mb-6" id="post-destination-form-title">Add New Destination</h2>
+                    <form id="post-destination-form">
+                        <input type="hidden" id="post-destination-id" value="">
+                        <div class="mb-4"><label for="post-destination-title" class="block text-gray-700 font-medium mb-2">Destination Title</label><input type="text" id="post-destination-title" class="w-full px-4 py-2 border border-gray-300 rounded-md" required></div>
+                        <div class="mb-4"><label for="post-destination-location" class="block text-gray-700 font-medium mb-2">Location / Province</label><input type="text" id="post-destination-location" class="w-full px-4 py-2 border border-gray-300 rounded-md" required></div>
+                        <div class="mb-4"><label for="post-destination-activities" class="block text-gray-700 font-medium mb-2">Activities (Comma-separated)</label><input type="text" id="post-destination-activities" class="w-full px-4 py-2 border border-gray-300 rounded-md" placeholder="e.g., Hiking, Cultural, Wildlife"></div>
+                        <div class="mb-4"><label for="post-destination-duration" class="block text-gray-700 font-medium mb-2">Trip Duration</label><select id="post-destination-duration" class="w-full px-4 py-2 border border-gray-300 rounded-md"><option value="">Select Duration</option><option value="1-3 Days">1-3 Days</option><option value="4-7 Days">4-7 Days</option><option value="1-2 Weeks">1-2 Weeks</option></select></div>
+                        <div class="mb-4"><label for="post-destination-short-desc" class="block text-gray-700 font-medium mb-2">Short Description</label><textarea id="post-destination-short-desc" rows="3" class="w-full px-4 py-2 border border-gray-300 rounded-md" required></textarea></div>
+                        <div class="mb-6">
+                            <label for="post-destination-images-url" class="block text-gray-700 font-medium mb-2">Image URL</label>
+                            <input type="text" id="post-destination-images-url" placeholder="https://..." class="w-full px-4 py-2 border border-gray-300 rounded-md mb-3">
+                            <!-- Image Preview -->
+                            <div id="destination-image-preview" class="hidden">
+                                <p class="text-sm text-gray-600 mb-2">Current Image Preview:</p>
+                                <div class="border border-gray-200 rounded-lg p-2 bg-gray-50">
+                                    <img id="destination-preview-img" src="" alt="Destination preview" class="w-full max-w-xs h-48 object-cover rounded-md mx-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div class="text-center text-gray-500 text-sm py-8 hidden">Image not available</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button type="submit" id="post-destination-submit-btn" class="w-full bg-green-700 text-white py-2 px-4 rounded-md hover:bg-green-800">Submit</button>
+                            <button type="button" id="cancel-destination-post" class="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            <section id="post-tour" class="page-section py-16">
+                 <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
+                    <h2 class="text-3xl font-bold text-center mb-6" id="post-tour-form-title">Add New Tour</h2>
+                    <form id="post-tour-form">
+                        <input type="hidden" id="post-tour-id" value="">
+                        <div class="mb-4"><label for="post-tour-name" class="block text-gray-700 font-medium mb-2">Tour Name</label><input type="text" id="post-tour-name" class="w-full px-4 py-2 border border-gray-300 rounded-md" required></div>
+                        <div class="mb-4"><label for="post-tour-type" class="block text-gray-700 font-medium mb-2">Tour Type</label>
+                            <select id="post-tour-type" class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
+                                <option value="Adventure">Adventure</option>
+                                <option value="Cultural">Cultural</option>
+                                <option value="Wildlife">Wildlife</option>
+                                <option value="Beach">Beach</option>
+                            </select>
+                        </div>
+                        <div class="mb-4"><label for="post-tour-price" class="block text-gray-700 font-medium mb-2">Price (USD)</label><input type="number" id="post-tour-price" class="w-full px-4 py-2 border border-gray-300 rounded-md" required></div>
+                        <div class="mb-4"><label for="post-tour-group-size" class="block text-gray-700 font-medium mb-2">Group Size</label>
+                            <select id="post-tour-group-size" class="w-full px-4 py-2 border border-gray-300 rounded-md" required>
+                                <option value="small">Small (1-4)</option>
+                                <option value="medium">Medium (5-10)</option>
+                                <option value="large">Large (10+)</option>
+                            </select>
+                        </div>
+                        <div class="mb-6">
+                            <label for="post-tour-image" class="block text-gray-700 font-medium mb-2">Image URL</label>
+                            <input type="url" id="post-tour-image" placeholder="https://..." class="w-full px-4 py-2 border border-gray-300 rounded-md mb-3" required>
+                            <!-- Image Preview -->
+                            <div id="tour-image-preview" class="hidden">
+                                <p class="text-sm text-gray-600 mb-2">Current Image Preview:</p>
+                                <div class="border border-gray-200 rounded-lg p-2 bg-gray-50">
+                                    <img id="tour-preview-img" src="" alt="Tour preview" class="w-full max-w-xs h-48 object-cover rounded-md mx-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                                    <div class="text-center text-gray-500 text-sm py-8 hidden">Image not available</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button type="submit" id="post-tour-submit-btn" class="w-full bg-green-700 text-white py-2 px-4 rounded-md hover:bg-green-800">Submit</button>
+                            <button type="button" id="cancel-tour-post" class="w-full bg-gray-200 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-300">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+            
+            <!-- Tour Detail Page -->
+            <section id="tour-detail" class="page-section py-16">
+                <div class="container mx-auto px-6">
+                    <div class="max-w-4xl mx-auto">
+                        <!-- Tour Detail Content -->
+                        <div id="tour-detail-content" class="bg-white rounded-xl shadow-lg overflow-hidden">
+                            <!-- Content will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Destination Detail Page -->
+            <section id="destination-detail" class="page-section py-16">
+                <div class="container mx-auto px-6">
+                    <div class="max-w-4xl mx-auto">
+                        <!-- Destination Detail Content -->
+                        <div id="destination-detail-content" class="bg-white rounded-xl shadow-lg overflow-hidden">
+                            <!-- Content will be populated dynamically -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Booking Confirmation Page -->
+            <section id="booking-confirmation" class="page-section py-16">
+                <div class="container mx-auto px-6">
+                    <div class="max-w-2xl mx-auto bg-white rounded-xl shadow-lg p-8 text-center">
+                        <div class="mb-6">
+                            <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+                            <h1 class="text-3xl font-bold text-gray-900 mb-2">Booking Confirmed!</h1>
+                            <p class="text-gray-600">Thank you for choosing Visit Lanka. Your adventure awaits!</p>
+                        </div>
+                        
+                        <div id="booking-details" class="bg-gray-50 rounded-lg p-6 mb-6 text-left">
+                            <!-- Booking details will be populated here -->
+                        </div>
+                        
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <a href="#" class="bg-green-700 text-white px-6 py-3 rounded-lg hover:bg-green-800 nav-link" data-target="account">View My Bookings</a>
+                            <a href="#tours" class="bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 nav-link">Browse More Tours</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-gray-300 pt-16 pb-8">
+        <div class="container mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-8 mb-8">
+                <div class="md:col-span-1">
+                    <img src="./images/logo.png" alt="Visit Lanka Logo" class="h-12 mb-4 logo-image-circular" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display: none; margin-bottom: 1rem;">
+                        <span style="font-size: 1.5rem; font-weight: bold; color: #0d9488;">Visit Lanka</span>
+                    </div>
+                    <p class="text-gray-400">Explore the Pearl of the Indian Ocean with our expertly crafted travel experiences.</p>
+                     <div class="flex space-x-4 mt-4">
+                        <a href="https://www.facebook.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="https://www.instagram.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.twitter.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.youtube.com" target="_blank" rel="noopener noreferrer" class="text-gray-400 hover:text-white"><i class="fab fa-youtube"></i></a>
+                     </div>
+                </div>
+                <div>
+                    <h4 class="font-bold text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#home" class="hover:text-white nav-link">Home</a></li>
+                        <li><a href="#destinations" class="hover:text-white nav-link">Destinations</a></li>
+                        <li><a href="#tours" class="hover:text-white nav-link">Tours</a></li>
+                        <li><a href="#gallery" class="hover:text-white nav-link">Gallery</a></li>
+                        <li><a href="#contact" class="hover:text-white nav-link">Contact</a></li>
+                    </ul>
+                </div>
+                 <div>
+                    <h4 class="font-bold text-white mb-4">Contact Info</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li class="flex items-start"><i class="fas fa-map-marker-alt mt-1 mr-2"></i><span>123 Galle Road, Colombo 03</span></li>
+                        <li class="flex items-start"><i class="fas fa-phone-alt mt-1 mr-2"></i><span>+94 11 234 5678</span></li>
+                        <li class="flex items-start"><i class="fas fa-envelope mt-1 mr-2"></i><span>info@visitlanka.com</span></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="border-t border-gray-700 pt-6 text-center text-gray-500">
+                <p>&copy; 2025 Visit Lanka. All rights reserved. Explore the Pearl of the Indian Ocean.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Lightbox Modal for Gallery Images -->
+    <div id="lightbox-modal" class="lightbox-modal">
+        <span class="lightbox-close">&times;</span>
+        <img class="lightbox-content rounded-lg" id="lightbox-image" alt="Enlarged gallery view">
+    </div>
+
+    <!-- Custom Modal for Notifications and Confirmations -->
+    <div id="custom-modal" class="custom-modal-overlay">
+        <div class="custom-modal">
+            <h3 id="modal-title" class="text-xl font-bold mb-4"></h3>
+            <p id="modal-message" class="text-gray-600 mb-6"></p>
+            <div id="modal-buttons" class="flex justify-end space-x-4">
+                <!-- Buttons are added dynamically -->
+            </div>
+        </div>
+    </div>
+    
+    <!-- Import data first, then all other JS files -->
+    <script src="./data.js"></script>
+    <script src="./modals.js"></script>
+    <script src="./slideshow.js"></script>
+    <script src="./auth.js"></script>
+    <script src="./app.js"></script>
+</body>
+</html>
