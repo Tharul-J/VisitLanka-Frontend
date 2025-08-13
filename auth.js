@@ -2,7 +2,7 @@
 // const users = [...];
 let currentUser = null; // Holds the currently logged-in user object
 
-const login = (email) => {
+const login = async (email) => {
     const user = users.find(u => u.email === email);
     if (user) {
         currentUser = { ...user };
@@ -12,7 +12,7 @@ const login = (email) => {
     }
 };
 
-const logout = () => {
+const logout = async () => {
     currentUser = null;
 };
 

@@ -77,12 +77,32 @@ document.addEventListener('DOMContentLoaded', () => {
         loadMoreBtn.classList.toggle('hidden', !hasMoreDestinations);
     };
     
-    const renderTours = (loadMore = false) => {
+    const renderTours = async (loadMore = false) => {
         const grid = document.getElementById('tours-grid');
         const loadMoreBtn = document.getElementById('load-more-tours');
         const loadingDiv = document.getElementById('tours-loading');
         
         if (!grid) return;
+        
+        // Fetch tours from API instead of using static data
+        let allTours = [];
+        try {
+            const response = await fetch('./backend/complete-api.php?action=tours');
+            const result = await response.json();
+            
+            if (result.success && result.data.tours) {
+                allTours = result.data.tours;
+                // Also update the global tours array for consistency
+                tours.length = 0; // Clear existing array
+                tours.push(...allTours); // Add all tours from API
+            } else {
+                console.warn('Failed to fetch tours from API, using static data');
+                allTours = tours; // Fallback to static data
+            }
+        } catch (error) {
+            console.warn('Error fetching tours from API, using static data:', error);
+            allTours = tours; // Fallback to static data
+        }
         
         // Get filter values with fallbacks
         const typeFilter = document.getElementById('tour-type-filter')?.value || 'all';
@@ -90,10 +110,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const groupSizeFilter = document.getElementById('group-size-filter')?.value || 'all';
         const searchFilter = document.getElementById('tour-search-input')?.value?.toLowerCase() || '';
         
-        const filteredTours = tours.filter(tour =>
+        const filteredTours = allTours.filter(tour =>
             (typeFilter === 'all' || tour.type === typeFilter) &&
             (priceFilter === 'all' || (priceFilter === 'low' && tour.price < 500) || (priceFilter === 'medium' && tour.price >= 500 && tour.price <= 1500) || (priceFilter === 'high' && tour.price > 1500)) &&
-            (groupSizeFilter === 'all' || tour.groupSize === groupSizeFilter) &&
+            (groupSizeFilter === 'all' || tour.group_size === groupSizeFilter || tour.groupSize === groupSizeFilter) &&
             (tour.name.toLowerCase().includes(searchFilter))
         );
 
@@ -122,8 +142,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 </div>
                 <div class="flex items-center text-sm text-gray-500 mb-3">
                     <p class="capitalize">${tour.type} Tour</p>
-                    <span class="mx-2">窶｢</span>
-                    <p class="capitalize">${tour.groupSize} Group</p>
+                    <span class="mx-2">•</span>
+                    <p class="capitalize">${tour.group_size || tour.groupSize} Group</p>
                 </div>
                 <button class="w-full bg-green-700 text-white py-2 px-4 rounded-lg hover:bg-green-800 transition-colors">
                     View Details & Book
@@ -147,59 +167,100 @@ document.addEventListener('DOMContentLoaded', () => {
         loadMoreBtn.classList.toggle('hidden', !hasMoreTours);
     };
 
-    const renderUserBookings = () => {
+    const renderUserBookings = async () => {
         const container = document.getElementById('user-bookings-container');
         const noBookingsDiv = document.getElementById('no-user-bookings');
         const bookingsList = document.getElementById('user-bookings-list');
         
         if (!container || !getCurrentUser()) return;
         
-        const userBookings = bookings.filter(b => b.userId === getCurrentUser().id);
-        
-        if (userBookings.length === 0) {
-            noBookingsDiv.classList.remove('hidden');
-            bookingsList.innerHTML = '';
-        } else {
-            noBookingsDiv.classList.add('hidden');
-            bookingsList.innerHTML = userBookings.map(booking => {
-                const tour = tours.find(t => t.id === booking.tourId);
-                return `
-                    <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
-                        <div class="flex flex-col md:flex-row md:items-center md:justify-between">
-                            <div class="flex-1">
-                                <h3 class="text-xl font-bold text-gray-900 mb-2">${tour?.name || 'Unknown Tour'}</h3>
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                                    <div>
-                                        <span class="font-medium">Date:</span> ${booking.date}
+        try {
+            // Fetch user bookings from backend
+            const response = await fetch('./backend/complete-api.php?action=bookings');
+            const result = await response.json();
+            
+            if (result.success && result.data.bookings) {
+                const userBookings = result.data.bookings;
+                
+                if (userBookings.length === 0) {
+                    noBookingsDiv.classList.remove('hidden');
+                    bookingsList.innerHTML = '';
+                } else {
+                    noBookingsDiv.classList.add('hidden');
+                    bookingsList.innerHTML = userBookings.map(booking => {
+                        return `
+                            <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
+                                <div class="flex flex-col md:flex-row md:items-center md:justify-between">
+                                    <div class="flex-1">
+                                        <h3 class="text-xl font-bold text-gray-900 mb-2">${booking.tour_name || 'Unknown Tour'}</h3>
+                                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
+                                            <div>
+                                                <span class="font-medium">Date:</span> ${booking.booking_date}
+                                            </div>
+                                            <div>
+                                                <span class="font-medium">Guests:</span> ${booking.guests}
+                                            </div>
+                                            <div>
+                                                <span class="font-medium">Total Price:</span> $${booking.total_price}
+                                            </div>
+                                            <div>
+                                                <span class="font-medium">Status:</span> 
+                                                <span class="px-2 py-1 rounded-full text-xs ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800'}">${booking.status}</span>
+                                            </div>
+                                        </div>
+                                        ${booking.special_requests ? `<div class="mt-3"><span class="font-medium text-gray-700">Special Requests:</span> ${booking.special_requests}</div>` : ''}
                                     </div>
-                                    <div>
-                                        <span class="font-medium">Guests:</span> ${booking.guests}
-                                    </div>
-                                    <div>
-                                        <span class="font-medium">Total Price:</span> $${booking.totalPrice}
-                                    </div>
-                                    <div>
-                                        <span class="font-medium">Status:</span> 
-                                        <span class="px-2 py-1 rounded-full text-xs ${booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">${booking.status}</span>
+                                    <div class="mt-4 md:mt-0 md:ml-6">
+                                        ${booking.status !== 'cancelled' ? `
+                                            <button class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 cancel-booking-btn" data-booking-id="${booking.id}">
+                                                Cancel Booking
+                                            </button>
+                                        ` : ''}
                                     </div>
                                 </div>
-                                ${booking.specialRequests ? `<div class="mt-3"><span class="font-medium text-gray-700">Special Requests:</span> ${booking.specialRequests}</div>` : ''}
                             </div>
-                            <div class="mt-4 md:mt-0 md:ml-6">
-                                <button class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 cancel-booking-btn" data-booking-id="${booking.id}">
-                                    Cancel Booking
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+                        `;
+                    }).join('');
+                }
+            } else {
+                // Fallback to empty state
+                noBookingsDiv.classList.remove('hidden');
+                bookingsList.innerHTML = '';
+            }
+        } catch (error) {
+            console.error('Error fetching user bookings:', error);
+            noBookingsDiv.classList.remove('hidden');
+            bookingsList.innerHTML = '';
         }
     };
 
-    const renderTourDetail = (tourId) => {
-        const tour = tours.find(t => t.id == tourId);
-        if (!tour) return;
+    const renderTourDetail = async (tourId) => {
+        // First try to find tour in the current tours array
+        let tour = tours.find(t => t.id == tourId);
+        
+        // If not found, fetch from API
+        if (!tour) {
+            try {
+                const response = await fetch('./backend/complete-api.php?action=tours');
+                const result = await response.json();
+                
+                if (result.success && result.data.tours) {
+                    const apiTours = result.data.tours;
+                    tour = apiTours.find(t => t.id == tourId);
+                    
+                    // Update the global tours array
+                    tours.length = 0;
+                    tours.push(...apiTours);
+                }
+            } catch (error) {
+                console.error('Error fetching tour details:', error);
+            }
+        }
+        
+        if (!tour) {
+            console.error('Tour not found:', tourId);
+            return;
+        }
         
         currentTour = tour;
         const content = document.getElementById('tour-detail-content');
@@ -220,8 +281,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         <h1 class="text-4xl font-bold text-gray-900 mb-4">${tour.name}</h1>
                         <div class="flex items-center mb-6">
                             <span class="bg-teal-100 text-teal-800 px-3 py-1 rounded-full text-sm font-medium mr-4">${tour.type} Tour</span>
-                            <span class="text-gray-600 capitalize mr-4">${tour.groupSize} Group</span>
+                            <span class="text-gray-600 capitalize mr-4">${tour.group_size || tour.groupSize} Group</span>
                             <span class="text-gray-600">${tour.duration || '3-5 days'}</span>
+                            <span class="text-gray-600 ml-4">⭐ 4.8/5 Rating</span>
                         </div>
                         
                         <div class="prose max-w-none mb-8">
@@ -232,7 +294,11 @@ document.addEventListener('DOMContentLoaded', () => {
                             
                             <h3 class="text-xl font-semibold mb-3">Tour Highlights</h3>
                             <ul class="list-disc list-inside text-gray-600 space-y-1 mb-6">
-                                ${tour.highlights ? tour.highlights.map(highlight => `<li>${highlight}</li>`).join('') : `
+                                ${tour.highlights ? 
+                                    (Array.isArray(tour.highlights) ? 
+                                        tour.highlights.map(highlight => `<li>${highlight}</li>`).join('') :
+                                        tour.highlights.split(',').map(highlight => `<li>${highlight.trim()}</li>`).join('')
+                                    ) : `
                                     <li>Professional tour guide</li>
                                     <li>Transportation</li>
                                     <li>Entrance fees to attractions</li>
@@ -657,7 +723,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const renderAdminTables = () => {
+    const renderAdminTables = async () => {
         const destTbody = document.getElementById('admin-destinations-table-body');
         if (destTbody) destTbody.innerHTML = destinations.map(dest => `
             <tr class="border-b hover:bg-gray-50 transition-colors">
@@ -679,40 +745,128 @@ document.addEventListener('DOMContentLoaded', () => {
             </tr>`).join('');
         
         const tourTbody = document.getElementById('admin-tours-table-body');
-        if (tourTbody) tourTbody.innerHTML = tours.map(tour => `
-            <tr class="border-b hover:bg-gray-50 transition-colors">
-                <td class="p-3">
-                    <img src="${tour.image || './images/default-tour.png'}" 
-                         alt="${tour.name}" 
-                         class="w-16 h-12 object-cover rounded-md border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
-                         onerror="this.onerror=null;this.src='https://placehold.co/64x48/cccccc/ffffff?text=No+Image';"
-                         title="Click to view full image"
-                         onclick="showImageModal('${tour.image || ''}', '${tour.name}')">
-                </td>
-                <td class="p-3 font-medium">${tour.name}</td> 
-                <td class="p-3 text-gray-600">$${tour.price}</td>
-                <td class="p-3">
-                    <button class="text-blue-500 hover:text-blue-700 hover:underline mr-4 edit-tour-btn font-medium" data-id="${tour.id}">Edit</button>
-                    <button class="text-red-500 hover:text-red-700 hover:underline delete-tour-btn font-medium" data-id="${tour.id}">Delete</button>
-                </td>
-            </tr>`).join('');
+        if (tourTbody) {
+            try {
+                const response = await fetch('./backend/complete-api.php?action=tours');
+                const result = await response.json();
+                
+                if (result.success && result.data.tours) {
+                    const apiTours = result.data.tours;
+                    tourTbody.innerHTML = apiTours.map(tour => `
+                        <tr class="border-b hover:bg-gray-50 transition-colors">
+                            <td class="p-3">
+                                <img src="${tour.image || './images/default-tour.png'}" 
+                                     alt="${tour.name}" 
+                                     class="w-16 h-12 object-cover rounded-md border border-gray-200 shadow-sm hover:shadow-md transition-shadow cursor-pointer" 
+                                     onerror="this.onerror=null;this.src='https://placehold.co/64x48/cccccc/ffffff?text=No+Image';"
+                                     title="Click to view full image"
+                                     onclick="showImageModal('${tour.image || ''}', '${tour.name}')">
+                            </td>
+                            <td class="p-3 font-medium">${tour.name}</td> 
+                            <td class="p-3 text-gray-600">$${tour.price}</td>
+                            <td class="p-3 text-gray-600">${tour.type}</td>
+                            <td class="p-3 text-gray-600">${tour.group_size}</td>
+                            <td class="p-3">
+                                <button class="text-blue-500 hover:text-blue-700 hover:underline mr-4 edit-tour-btn font-medium" data-id="${tour.id}">Edit</button>
+                                <button class="text-red-500 hover:text-red-700 hover:underline delete-tour-btn font-medium" data-id="${tour.id}">Delete</button>
+                            </td>
+                        </tr>`).join('');
+                } else {
+                    tourTbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-500">No tours found</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error fetching tours:', error);
+                tourTbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-red-500">Error loading tours</td></tr>';
+            }
+        }
             
+        // Fetch bookings from API
         const bookingsTbody = document.getElementById('admin-bookings-table-body');
-        if (bookingsTbody) bookingsTbody.innerHTML = bookings.map(booking => {
-            const tour = tours.find(t => t.id === booking.tourId);
-            const user = users.find(u => u.id === booking.userId);
-            return `
-                <tr class="border-b">
-                    <td class="p-3">${tour?.name || 'Unknown Tour'}</td>
-                    <td class="p-3">${user?.name || 'Unknown User'}</td>
-                    <td class="p-3">${booking.guests}</td>
-                    <td class="p-3">${booking.date}</td>
-                </tr>
-            `;
-        }).join('');
+        if (bookingsTbody) {
+            try {
+                const response = await fetch('./backend/complete-api.php?action=all-bookings');
+                const result = await response.json();
+                
+                if (result.success && result.data.bookings) {
+                    const apiBookings = result.data.bookings;
+                    bookingsTbody.innerHTML = apiBookings.map(booking => `
+                        <tr class="border-b hover:bg-gray-50 transition-colors">
+                            <td class="p-3 font-medium">${booking.tour_name || 'Unknown Tour'}</td>
+                            <td class="p-3">${booking.customer_name || booking.customer_email || 'Guest User'}</td>
+                            <td class="p-3 text-center">${booking.guests}</td>
+                            <td class="p-3">${booking.booking_date}</td>
+                            <td class="p-3">
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full ${
+                                    booking.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                    booking.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                    'bg-red-100 text-red-800'
+                                }">${booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}</span>
+                            </td>
+                            <td class="p-3">
+                                <button class="text-blue-500 hover:text-blue-700 hover:underline mr-2 confirm-booking-btn font-medium" data-id="${booking.id}" ${booking.status === 'confirmed' ? 'disabled' : ''}>
+                                    ${booking.status === 'confirmed' ? 'Confirmed' : 'Confirm'}
+                                </button>
+                                <button class="text-red-500 hover:text-red-700 hover:underline cancel-booking-btn font-medium" data-id="${booking.id}" ${booking.status === 'cancelled' ? 'disabled' : ''}>
+                                    ${booking.status === 'cancelled' ? 'Cancelled' : 'Cancel'}
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                    
+                    // Add event listeners for booking actions
+                    document.querySelectorAll('.confirm-booking-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const bookingId = e.target.dataset.id;
+                            updateBookingStatus(bookingId, 'confirmed');
+                        });
+                    });
+                    
+                    document.querySelectorAll('.cancel-booking-btn').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            const bookingId = e.target.dataset.id;
+                            updateBookingStatus(bookingId, 'cancelled');
+                        });
+                    });
+                } else {
+                    bookingsTbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-gray-500">No bookings found</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error fetching bookings:', error);
+                bookingsTbody.innerHTML = '<tr><td colspan="6" class="p-6 text-center text-red-500">Error loading bookings</td></tr>';
+            }
+        }
         
         // Update dashboard stats
         updateAdminStats();
+    };
+
+    // Function to update booking status
+    const updateBookingStatus = async (bookingId, status) => {
+        try {
+            const response = await fetch('./backend/complete-api.php?action=bookings', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    booking_id: bookingId,
+                    status: status
+                })
+            });
+            
+            const result = await response.json();
+            
+            if (result.success) {
+                showAlert('Success', `Booking ${status} successfully!`);
+                // Refresh the admin tables to show updated status
+                renderAdminTables();
+            } else {
+                showAlert('Error', result.message || 'Failed to update booking status');
+            }
+        } catch (error) {
+            console.error('Error updating booking status:', error);
+            showAlert('Error', 'Network error occurred while updating booking status');
+        }
     };
 
     const renderAdminGallery = () => {
@@ -911,13 +1065,15 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('tour-image-preview').classList.add('hidden');
     };
 
-    const navigateToAdminSection = (sectionId) => {
+    const navigateToAdminSection = async (sectionId) => {
         document.querySelectorAll('.admin-section').forEach(sec => sec.classList.toggle('active', sec.id === sectionId));
         if (sectionId === 'admin-dashboard') {
             updateAdminStats();
             renderChart();
         }
-        if (sectionId === 'admin-destinations' || sectionId === 'admin-tours') renderAdminTables();
+        if (sectionId === 'admin-destinations' || sectionId === 'admin-tours' || sectionId === 'admin-bookings') {
+            await renderAdminTables();
+        }
         if (sectionId === 'admin-gallery') renderAdminGallery();
     };
     
@@ -1039,8 +1195,9 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.closest('.tour-card')) {
             const tourId = e.target.closest('.tour-card').dataset.tourId;
             if (tourId) {
-                renderTourDetail(parseInt(tourId));
-                navigateToPage('tour-detail');
+                renderTourDetail(parseInt(tourId)).then(() => {
+                    navigateToPage('tour-detail');
+                });
             }
         }
         
@@ -1280,19 +1437,27 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Form submissions & Filters ---
-    document.getElementById('login-form')?.addEventListener('submit', e => {
+    document.getElementById('login-form')?.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('login-email').value;
-        const result = login(email); // Use the function from auth.js
-        if (result.success) {
-            updateUIForLogin();
-            if (result.user.role === 'admin') {
-                navigateToPage('admin');
-            } else {
-                navigateToPage('home-page');
+        
+        try {
+            const result = await login(email); // Use the function from auth.js
+            if (result.success) {
+                updateUIForLogin();
+                if (result.user.role === 'admin') {
+                    navigateToPage('admin');
+                } else {
+                    navigateToPage('home-page');
+                }
+                showAlert(`Welcome back, ${result.user.name}!`, "You have successfully logged in.");
+            } else { 
+                showAlert('Login Failed', 'User not found.'); 
             }
-            showAlert(`Welcome back, ${result.user.name}!`, "You have successfully logged in.");
-        } else { showAlert('Login Failed', 'User not found.'); }
+        } catch (error) {
+            console.error('Login error:', error);
+            showAlert('Login Failed', 'An error occurred during login. Please try again.');
+        }
     });
     
     // Booking form submission
@@ -1308,40 +1473,84 @@ document.addEventListener('DOMContentLoaded', () => {
             const date = document.getElementById('booking-date').value;
             const guests = parseInt(document.getElementById('booking-guests').value);
             const specialRequests = document.getElementById('special-requests').value;
-            const totalPrice = currentTour.price * guests;
             
-            const newBooking = {
-                id: bookings.length + 1,
-                userId: getCurrentUser().id,
-                tourId: currentTour.id,
-                date: date,
+            // Use current user's information for customer details
+            const currentUserData = getCurrentUser();
+            const customerName = currentUserData.name || 'Guest User';
+            const customerEmail = currentUserData.email || 'guest@example.com';
+            const customerPhone = currentUserData.phone || '000-000-0000'; // Default phone if not available
+            
+            // Create booking via backend API
+            const bookingData = {
+                tour_id: currentTour.id,
+                booking_date: date,
                 guests: guests,
-                specialRequests: specialRequests,
-                totalPrice: totalPrice,
-                status: 'confirmed',
-                bookingDate: new Date().toISOString().split('T')[0]
+                customer_name: customerName,
+                customer_email: customerEmail,
+                customer_phone: customerPhone,
+                special_requests: specialRequests || ''
             };
             
-            bookings.push(newBooking);
+            // Show loading state
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Booking...';
+            submitBtn.disabled = true;
             
-            // Update admin stats if admin is logged in
-            updateAdminStats();
-            
-            // Show booking confirmation
-            const bookingDetails = document.getElementById('booking-details');
-            bookingDetails.innerHTML = `
-                <h3 class="text-lg font-semibold mb-3">Booking Details</h3>
-                <div class="space-y-2">
-                    <div><span class="font-medium">Tour:</span> ${currentTour.name}</div>
-                    <div><span class="font-medium">Date:</span> ${date}</div>
-                    <div><span class="font-medium">Guests:</span> ${guests}</div>
-                    <div><span class="font-medium">Total Price:</span> $${totalPrice}</div>
-                    <div><span class="font-medium">Booking Reference:</span> VL-${String(newBooking.id).padStart(6, '0')}</div>
-                    ${specialRequests ? `<div><span class="font-medium">Special Requests:</span> ${specialRequests}</div>` : ''}
-                </div>
-            `;
-            
-            navigateToPage('booking-confirmation');
+            fetch('./backend/complete-api.php?action=bookings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(bookingData)
+            })
+            .then(response => {
+                console.log('Response status:', response.status);
+                return response.json();
+            })
+            .then(result => {
+                console.log('Booking result:', result);
+                if (result.success) {
+                    const booking = result.data.booking;
+                    
+                    // Show booking confirmation
+                    const bookingDetails = document.getElementById('booking-details');
+                    bookingDetails.innerHTML = `
+                        <h3 class="text-lg font-semibold mb-3">Booking Details</h3>
+                        <div class="space-y-2">
+                            <div><span class="font-medium">Tour:</span> ${booking.tour_name}</div>
+                            <div><span class="font-medium">Date:</span> ${booking.booking_date}</div>
+                            <div><span class="font-medium">Guests:</span> ${booking.guests}</div>
+                            <div><span class="font-medium">Total Price:</span> $${booking.total_price}</div>
+                            <div><span class="font-medium">Status:</span> <span class="px-2 py-1 rounded-full text-xs bg-yellow-100 text-yellow-800">${booking.status}</span></div>
+                            <div><span class="font-medium">Booking Reference:</span> VL-${String(booking.id).padStart(6, '0')}</div>
+                            ${specialRequests ? `<div><span class="font-medium">Special Requests:</span> ${specialRequests}</div>` : ''}
+                        </div>
+                        <div class="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
+                            <p class="text-sm text-yellow-800">
+                                <i class="fas fa-clock mr-1"></i>
+                                Your booking is <strong>pending</strong> and will be reviewed by our team. You will receive a confirmation email once approved.
+                            </p>
+                        </div>
+                    `;
+                    
+                    navigateToPage('booking-confirmation');
+                    
+                    // Refresh user bookings
+                    renderUserBookings();
+                    
+                } else {
+                    console.error('Booking failed:', result);
+                    showAlert('Booking Failed', result.message || 'Unable to create booking. Please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Booking error:', error);
+                showAlert('Booking Failed', 'An error occurred while creating your booking. Please check the console for details.');
+            })
+            .finally(() => {
+                // Reset button state
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            });
         }
         
         // Gallery form submission
@@ -1436,6 +1645,16 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.id === 'post-tour-form') {
             e.preventDefault();
             
+            // Check if all form elements exist
+            const nameField = document.getElementById('post-tour-name');
+            const typeField = document.getElementById('post-tour-type');
+            const priceField = document.getElementById('post-tour-price');
+            
+            if (!nameField || !typeField || !priceField) {
+                showAlert('Error', 'Form fields are missing. Please refresh the page.');
+                return;
+            }
+            
             // Check if user is admin
             if (!getCurrentUser() || getCurrentUser().role !== 'admin') {
                 showAlert('Access Denied', 'Only administrators can add or edit tours.');
@@ -1449,48 +1668,59 @@ document.addEventListener('DOMContentLoaded', () => {
             const groupSize = document.getElementById('post-tour-group-size').value;
             const image = document.getElementById('post-tour-image').value.trim();
             
-            // Validate form
-            if (!name || !type || !price || !groupSize || !image) {
-                showAlert('Validation Error', 'All fields are required.');
+            // More flexible validation - only require name, type, and price
+            if (!name || !type || !price) {
+                showAlert('Validation Error', 'Name, type, and price are required.');
                 return;
             }
             
+            // Provide defaults for optional fields
+            const finalGroupSize = groupSize || 'medium';
+            const finalImage = image || './images/default-tour.png';
+            
             if (tourId) {
-                // Update existing tour
-                const tourIndex = tours.findIndex(t => t.id === parseInt(tourId));
-                if (tourIndex > -1) {
-                    tours[tourIndex].name = name;
-                    tours[tourIndex].type = type;
-                    tours[tourIndex].price = price;
-                    tours[tourIndex].groupSize = groupSize;
-                    tours[tourIndex].image = image;
-                    
-                    showAlert('Success', 'Tour updated successfully!');
-                    renderAdminTables();
-                    updateAdminStats();
-                    renderTours();
-                    navigateToPage('admin');
-                }
+                // Update existing tour (would need PUT endpoint)
+                showAlert('Info', 'Tour editing not implemented yet in API.');
             } else {
-                // Add new tour
                 const newTour = {
-                    id: tours.length + 1,
                     name: name,
                     type: type,
                     price: price,
-                    groupSize: groupSize,
-                    image: image,
+                    group_size: finalGroupSize,
+                    image: finalImage,
                     description: `Experience ${name} - ${type.toLowerCase()} tour with amazing ${type.toLowerCase()} activities.`,
-                    highlights: ['Professional guides', 'All equipment included', 'Transportation provided', 'Memorable experience'],
-                    duration: groupSize === 'small' ? '1 day' : groupSize === 'medium' ? '2 days' : '3 days'
+                    highlights: 'Professional guides, All equipment included, Transportation provided, Memorable experience',
+                    duration: finalGroupSize === 'small' ? '1 day' : finalGroupSize === 'medium' ? '2 days' : '3 days'
                 };
                 
-                tours.push(newTour);
-                showAlert('Success', 'Tour added successfully!');
-                renderAdminTables();
-                updateAdminStats();
-                renderTours();
-                navigateToPage('admin');
+                // Save to database via API
+                fetch('./backend/complete-api.php?action=tours', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(newTour)
+                })
+                .then(response => {
+                    return response.json();
+                })
+                .then(result => {
+                    if (result.success) {
+                        showAlert('Success', 'Tour added successfully to database!');
+                        // Clear the form
+                        document.getElementById('post-tour-form').reset();
+                        // Refresh the admin tables to show new tour
+                        renderAdminTables();
+                        updateAdminStats();
+                        renderTours(); // This will now fetch fresh data from API
+                        navigateToPage('admin');
+                    } else {
+                        showAlert('Error', result.message || 'Failed to add tour');
+                    }
+                })
+                .catch(error => {
+                    showAlert('Error', 'Network error occurred while adding tour: ' + error.message);
+                });
             }
         }
         

@@ -1,8 +1,9 @@
 // --- DATA (Simulated Database) ---
 // This data would eventually be replaced by a backend API call.
 const users = [
-    { id: 1, name: 'Admin User', email: 'admin@visitlanka.com', password: 'password', role: 'admin' },
-    { id: 2, name: 'Regular User', email: 'user@visitlanka.com', password: 'password', role: 'user' }
+    { id: 1, name: 'Admin User', email: 'admin@visitlanka.com', password: 'password', role: 'admin', phone: '+94-77-123-4567' },
+    { id: 2, name: 'John Doe', email: 'john@example.com', password: 'password', role: 'user', phone: '+94-77-987-6543' },
+    { id: 3, name: 'Regular User', email: 'user@visitlanka.com', password: 'password', role: 'user', phone: '+94-77-555-0123' }
 ];
 
 let destinations = [
@@ -22,95 +23,8 @@ let destinations = [
 ];
 
 let tours = [
-    { 
-        id: 1, 
-        name: 'Highland Adventure', 
-        type: 'Adventure', 
-        price: 1200, 
-        groupSize: 'small', 
-        image: './images/13.png',
-        description: 'Embark on an unforgettable highland adventure through the misty mountains of Sri Lanka. Experience breathtaking views, ancient temples, and traditional village life.',
-        highlights: ['Ella Rock hiking', 'Nine Arches Bridge', 'Tea plantation visit', 'Little Adams Peak'],
-        duration: '3 days'
-    },
-    { 
-        id: 2, 
-        name: 'Ancient Kingdoms', 
-        type: 'Cultural', 
-        price: 800, 
-        groupSize: 'medium', 
-        image: './images/14.png',
-        description: 'Journey through Sri Lanka\'s rich cultural heritage visiting ancient kingdoms, UNESCO World Heritage sites, and sacred temples.',
-        highlights: ['Sigiriya Rock Fortress', 'Dambulla Cave Temple', 'Polonnaruwa ruins', 'Temple of the Tooth'],
-        duration: '4 days'
-    },
-    { 
-        id: 3, 
-        name: 'Leopard Safari', 
-        type: 'Wildlife', 
-        price: 600, 
-        groupSize: 'small', 
-        image: './images/15.png',
-        description: 'Experience the thrill of wildlife photography and animal spotting in Yala National Park, home to the highest density of leopards in the world.',
-        highlights: ['Yala National Park safari', 'Leopard spotting', 'Elephant encounters', 'Bird watching'],
-        duration: '2 days'
-    },
-    { 
-        id: 4, 
-        name: 'Southern Coast Explorer', 
-        type: 'Beach', 
-        price: 1800, 
-        groupSize: 'large', 
-        image: './images/16.png',
-        description: 'Discover the pristine beaches of southern Sri Lanka, enjoy whale watching, and explore the historic Galle Fort.',
-        highlights: ['Whale watching in Mirissa', 'Galle Fort exploration', 'Beach relaxation', 'Stilt fishing in Koggala'],
-        duration: '5 days'
-    },
-    // Additional tours to demonstrate load more functionality
-    { 
-        id: 5, 
-        name: 'Tea Country Express', 
-        type: 'Cultural', 
-        price: 950, 
-        groupSize: 'medium', 
-        image: './images/17.png',
-        description: 'Journey through the emerald hills of Sri Lanka\'s tea country, visiting plantations and experiencing local culture.',
-        highlights: ['Tea factory tours', 'Scenic train rides', 'Mountain hiking', 'Local village visits'],
-        duration: '3 days'
-    },
-    { 
-        id: 6, 
-        name: 'Surf & Sand Adventure', 
-        type: 'Adventure', 
-        price: 750, 
-        groupSize: 'small', 
-        image: './images/18.png',
-        description: 'Perfect your surfing skills on the legendary waves of Arugam Bay while enjoying the laid-back beach lifestyle.',
-        highlights: ['Surfing lessons', 'Beach camping', 'Local seafood', 'Sunset photography'],
-        duration: '4 days'
-    },
-    { 
-        id: 7, 
-        name: 'Sacred Cities Pilgrimage', 
-        type: 'Cultural', 
-        price: 680, 
-        groupSize: 'large', 
-        image: './images/19.png',
-        description: 'Explore the sacred cities of Anuradhapura and Polonnaruwa, discovering ancient Buddhist heritage and architecture.',
-        highlights: ['Ancient dagobas', 'Buddhist temples', 'Archaeological sites', 'Meditation sessions'],
-        duration: '3 days'
-    },
-    { 
-        id: 8, 
-        name: 'Eastern Beaches Getaway', 
-        type: 'Beach', 
-        price: 1100, 
-        groupSize: 'medium', 
-        image: './images/20.png',
-        description: 'Discover the untouched beauty of Sri Lanka\'s eastern coastline with pristine beaches and crystal-clear waters.',
-        highlights: ['Trincomalee beaches', 'Snorkeling', 'Hot springs visit', 'Dolphin watching'],
-        duration: '4 days'
-    },
+    // Tours are now loaded from the database via API
+    // Static data has been migrated to the database
 ];
 
 let bookings = [];
